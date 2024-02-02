@@ -83,7 +83,7 @@ def main():
     else:
         bot.send_message(
             chat_id = user['id'],
-            text=f'Please {user["first_name"]} send me the button. My function works based on the following buttons',
+            text=f'Please {user["first_name"]} send me the text. My function works based on the following buttons(👍, 👎, 🆑)',
                 reply_markup=keyboard
             )
     return "Hello programmer"

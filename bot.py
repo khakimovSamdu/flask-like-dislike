@@ -1,6 +1,6 @@
 from flask import Flask, request
 from keyboards import keyboard, inline_keyboard
-from telegram import Bot
+from telegram import Bot, InlineQuery
 from db import(
     is_user,
     add_user,
@@ -83,7 +83,7 @@ def main():
                 reply_markup=keyboard
             )
     elif data['message'].get('photo')!=None:
-        if data['message']['data']=="inline_like":
+        if data['message']['photo']=="inline_like":
             if not is_user(chat_id=str(user['id'])):
                 start(user=data['message']['chat'])
             inc_inline_like(chat_id=str(user['id']))

@@ -31,7 +31,7 @@ def add_user(chat_id: str):
             "likes":0,
             "dislikes":0,
             "inline_likes":0,
-            "inline_dislikes":0 
+            "inline_dislikes":0
         }
     save_db(data)
 
@@ -62,20 +62,20 @@ def inc_inline_like(chat_id: str):
     data = read_db()
     if not is_user(chat_id):
         return False
-    data[chat_id]['inline_like'] += 1
+    data[chat_id]['inline_likes']+=1
     save_db(data)
 
 def inc_inline_dislike(chat_id: str):
     data = read_db()
     if not is_user(chat_id):
         return False
-    data[chat_id]['inline_dislike'] += 1
+    data[chat_id]['inline_dislikes']+=1
     save_db(data)
 
 def inc_inline_clear(chat_id: str):
     data = read_db()
     if not is_user(chat_id):
         return False
-    data[chat_id]['inline_like'] = 0
-    data[chat_id]['inline_dislike'] = 0
+    data[chat_id]['inline_likes'] = 0
+    data[chat_id]['inline_dislikes'] = 0
     save_db(data)

@@ -1,6 +1,9 @@
 from flask import Flask, request
 from keyboards import keyboard, inline_keyboard
-from telegram import Bot, InlineQuery
+from telegram import Bot, Update
+
+
+
 from db import(
     is_user,
     add_user,
@@ -33,6 +36,9 @@ app = Flask(__name__)
 TOKEN = "6984427979:AAGZ08mIUVwcSgiOzPpS7QZX31uP-_XWyE8"
 bot = Bot(TOKEN)
 url = "https://allamurodxakimov.pythonanywhere.com/"
+
+
+
 @app.route('/', methods=['POST'])
 def main():
     data = request.get_json()
@@ -83,7 +89,10 @@ def main():
                 reply_markup=keyboard
             )
     elif data['message'].get('photo')!=None:
-        if data['message']['photo']=="inline_like":
+        update = Update(update_id=data['update_id'])
+        db = update.callback_query.data
+
+        if db=="inline_like":
             if not is_user(chat_id=str(user['id'])):
                 start(user=data['message']['chat'])
             inc_inline_like(chat_id=str(user['id']))
@@ -92,7 +101,7 @@ def main():
                 chat_id=user['id'],photo = data['message']['photo'][0]['file_id'], caption = f'🔥 inline likes: {user_data["inline_likes"]}\n💣 inline dislikes: {user_data["inline_dislikes"]}',
                 reply_markup=inline_keyboard
             )
-        elif data['message']['data'] == "inline_dislike":
+        elif db == "inline_dislike":
             if not is_user(chat_id=str(user['id'])):
                 start(user=data['message']['chat'])
             inc_inline_dislike(chat_id=str(user['id']))
@@ -102,7 +111,7 @@ def main():
                 reply_markup=inline_keyboard
 
             )
-        elif data['message']['data'] == "inline_clear":
+        elif db == "inline_clear":
             if not is_user(chat_id=str(user['id'])):
                 start(user=data['message']['chat'])
             inc_inline_clear(chat_id=str(user['id']))

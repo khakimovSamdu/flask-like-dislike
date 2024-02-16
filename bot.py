@@ -1,6 +1,7 @@
 from flask import Flask, request
 from keyboards import keyboard, inline_keyboard
 from telegram import Bot, Update
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
 
 
@@ -13,7 +14,8 @@ from db import(
     clear,
     inc_inline_like,
     inc_inline_dislike,
-    inc_inline_clear
+    inc_inline_clear,
+    inline_button
     
 )
 
@@ -90,10 +92,10 @@ def main():
                 reply_markup=keyboard
             )
     elif data['message'].get('photo')!=None:
-        update = Update(update_id=data['update_id'])
-        db = update.callback_query.data
-
-        if db=="inline_like":
+        updater = Updater(token=TOKEN)
+        db = updater.dispatcher
+        db.add_handler(CallbackQueryHandler(inline_button))
+        if data['message']['text']=='inline_like':
             if not is_user(chat_id=str(user['id'])):
                 start(user=data['message']['chat'])
             inc_inline_like(chat_id=str(user['id']))
@@ -102,7 +104,7 @@ def main():
                 chat_id=user['id'],photo = data['message']['photo'][0]['file_id'], caption = f'🔥 inline likes: {user_data["inline_likes"]}\n💣 inline dislikes: {user_data["inline_dislikes"]}',
                 reply_markup=inline_keyboard
             )
-        elif db == "inline_dislike":
+        elif data['message']['text']=='inline_dislike':
             if not is_user(chat_id=str(user['id'])):
                 start(user=data['message']['chat'])
             inc_inline_dislike(chat_id=str(user['id']))
@@ -112,7 +114,7 @@ def main():
                 reply_markup=inline_keyboard
 
             )
-        elif db == "inline_clear":
+        elif data['message']['text'] == "inline_clear":
             if not is_user(chat_id=str(user['id'])):
                 start(user=data['message']['chat'])
             inc_inline_clear(chat_id=str(user['id']))

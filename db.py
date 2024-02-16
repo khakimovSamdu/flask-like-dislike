@@ -79,3 +79,8 @@ def inc_inline_clear(chat_id: str):
     data[chat_id]['inline_likes'] = 0
     data[chat_id]['inline_dislikes'] = 0
     save_db(data)
+
+def inline_button(update):
+    query = update.callback_query
+    query.edit_message_text(text=f"{query.data}")
+    

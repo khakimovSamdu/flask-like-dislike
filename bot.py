@@ -35,11 +35,17 @@ def start(user: str):
             reply_markup=keyboard
         )
     return
+
+def button(update: Update) -> None:
+    query = update.callback_query
+    data = query.data  # Bu joyda callback query ma'lumotlari olinadi
+    query.answer()
+    query.edit_message_text(text=f"Selected option: {data}")
+
 app = Flask(__name__)
 TOKEN = "6984427979:AAGZ08mIUVwcSgiOzPpS7QZX31uP-_XWyE8"
 bot = Bot(TOKEN)
 url = "https://allamurodxakimov.pythonanywhere.com/"
-
 
 
 @app.route('/', methods=['POST'])
@@ -92,16 +98,15 @@ def main():
                 reply_markup=keyboard
             )
     elif data['message'].get('photo')!=None:
-        updater = Updater(token=TOKEN)
-        db = updater.dispatcher
-        db.add_handler(CallbackQueryHandler(inline_button))
-        if data['message']['text']=='inline_like':
+        update = data['update_id']
+        button(update)
+        if True:
             if not is_user(chat_id=str(user['id'])):
                 start(user=data['message']['chat'])
             inc_inline_like(chat_id=str(user['id']))
             user_data = get_user(chat_id=str(user['id']))
             bot.send_photo(
-                chat_id=user['id'],photo = data['message']['photo'][0]['file_id'], caption = f'🔥 inline likes: {user_data["inline_likes"]}\n💣 inline dislikes: {user_data["inline_dislikes"]}',
+                chat_id=user['id'],photo = data['message']['photo'][0]['file_id'], caption = f'🔥 inline likes: {user_data["inline_likes"]}\n💣 inline dislikes: {user_data["inline_dislikes"]}\n{button(update)}',
                 reply_markup=inline_keyboard
             )
         elif data['message']['text']=='inline_dislike':

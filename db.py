@@ -1,5 +1,5 @@
 import json
-
+from telegram import Update
 def read_db():
     with open("db.json") as f:
         data = f.read()
@@ -80,7 +80,7 @@ def inc_inline_clear(chat_id: str):
     data[chat_id]['inline_dislikes'] = 0
     save_db(data)
 
-def inline_button(update):
+def inline_button(update: Update):
     query = update.callback_query
     query.edit_message_text(text=f"{query.data}")
-    
+
